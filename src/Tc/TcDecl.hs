@@ -1,0 +1,294 @@
+{-#LANGUAGE DeriveDataTypeable#-}
+
+module Tc.TcDecl where
+
+import Control.Monad
+import Control.Monad.Trans
+import Data.Generics
+import Data.List (partition,union, intersect,(\\), nub)
+
+import Language.Haskell.Exts hiding (name)
+
+import BuiltIn.BuiltInTypes
+
+import Tc.Assumption
+import {-# SOURCE #-}Tc.TcExp
+import Tc.TcMonad
+import Tc.TcPat
+import Tc.TcSubst
+import Tc.TcWellformed
+import Tc.TcAlphaEq
+import Tc.TcSimplify
+
+import Utils.ErrMsg
+import Utils.Nameable
+import Utils.DependencyAnalysis
+import Utils.Id
+
+-- type inference for declarations
+-- the first list of declarations: non-overloaded binds
+-- the second list of declarations: class / instance methods
+
+tcDecls :: [Decl] -> [Decl] -> TcM [Assumption]
+tcDecls ds is
+    = do
+        let (bs,as) = bindsFrom ds
+            (si,ib) = partition isTypeSig is
+            si' = map sig2Assump si
+            bs' = dependencyAnalysis TypeAnalysis (bs ++ map Method ib)
+        (_, as') <- extendGamma (as ++ si') (tcBindGroups True bs')
+        return (as ++ as' ++ si')
+
+-- Boolean: Is a top level declaration?
+
+tcDecl :: Bool -> Decl -> TcM (Context, [Assumption])
+tcDecl b f@(FunBind ms)
+    = withDiagnostic f $
+        do
+            rs <- mapM (tcMatch b) ms
+            let ctx = concatMap fst3 rs
+                ts = map snd3 rs
+                as = concatMap trd3 rs
+                n = name f
+            v <- newFreshVar
+            mapM_ (unify v) ts
+            s <- getSubst
+            let a = toScheme n ctx (apply s v)
+            return (ctx, [a])
+tcDecl b f@(PatBind _ p _ rhs bs)
+    = withDiagnostic f $
+        do
+            let n = name f
+            (ctx, as) <- tcBinds False bs
+            (ctx', as', t) <- tcPat p
+            (ctx'',t', as'') <- extendGamma (as ++ as') (tcRhs rhs)
+            s <- unify t t'
+            let ctx1 = apply s (concat [ctx, ctx', ctx''])
+                a = toScheme n ctx' (apply s t)
+            let af = if b then [a] else a : (apply s as')
+            return (ctx1, af)
+tcDecl _ x = typeDeclErrorPanic "Tc.TcDecl.tcDecl" x
+
+-- here we return the local assumptions for the
+-- use in the satisfiability test algorithm, because
+-- when we test sat, lambda-bound variables aren't in
+-- context, because they're removed by extendGamma.
+
+tcMatch :: Bool -> Match -> TcM (Context, Type, [Assumption])
+tcMatch _ m@(Match _ _ ps _ rhs wbs)
+    = do
+        (ctx, as, ts) <- tcPats ps
+        (ctx', as') <- extendGamma as (tcBinds False wbs)
+        (ctx'', t, as'') <- extendGamma (as ++ as') (tcRhs rhs)
+        s <- getSubst
+        let t' = foldr TyFun t ts
+            a = apply s (concat [ctx,ctx',ctx''])
+            b = apply s t'
+            ass = concat [as,as',as'']
+        return (a,b, ass)
+
+tcRhs :: Rhs -> TcM (Context, Type, [Assumption])
+tcRhs (UnGuardedRhs e)
+    = do
+        (ctx,t) <- tcExp e
+        return (ctx,t,[])
+tcRhs x@(GuardedRhss grs)
+    = do
+        rs <- mapM tcGuardedRhs grs
+        let ts = map snd3 rs
+            ctx = concatMap fst3 rs
+            as = concatMap trd3 rs
+        v <- newFreshVar
+        mapM_ (unify v) ts
+        s <- getSubst
+        let a = apply s ctx
+            b = apply s v
+            as' = apply s as
+        return (a,b,as')
+
+tcGuardedRhs :: GuardedRhs -> TcM (Context, Type, [Assumption])
+tcGuardedRhs (GuardedRhs _ [s] e)
+    = do
+        (ctx, as, Just t) <- tcStmt s
+        unify t tBool
+        (ctx', t) <- extendGamma as (tcExp e)
+        s <- getSubst
+        let a = apply s (ctx ++ ctx')
+            b = apply s t
+            as' = apply s as'
+        return (a,b,as')
+tcGuardedRhs x = unsupportedExpErrMsg x
+
+-- types and functions for typing binds
+
+type Sig = Decl -- INVARIANT: holds only type signatures
+
+-- a data type to represent implicit and explicit typed binds
+
+data BindKind = Impl Decl
+              | Expl Sig Decl
+              | Method Decl
+              deriving (Eq, Ord, Show, Data, Typeable)
+
+
+tcBinds :: Bool -> Binds -> TcM (Context, [Assumption])
+tcBinds b (BDecls ds)
+    = do
+        let (bs,as) = bindsFrom ds
+            bs' = dependencyAnalysis TypeAnalysis bs
+        (ctx, as') <- tcBindGroups b bs'
+        return (ctx, as ++ as')
+
+tcBinds _ (IPBinds x) = unsupportedDeclMsg (head x)
+
+tcBindGroups :: Bool -> [[BindKind]] -> TcM (Context, [Assumption])
+tcBindGroups b bs
+    = do
+        rs <- tcSeq (tcBindGroup b) bs
+        return (fst rs, snd rs)
+
+tcBindGroup :: Bool -> [BindKind] -> TcM (Context, [Assumption])
+tcBindGroup b bs
+    = do
+        let (es, is) = partition isExpl bs
+            as = map assumpFrom es
+        ias <- mapM (\i -> liftM (name i :>:) newFreshVar) is
+        as' <- extendGamma (as ++ ias) (tcSeq (tcBindKind b) is)
+        _ <- extendGamma (as ++ (snd as')) (tcSeq (tcBindKind b) es)
+        return (fst as', (snd as') ++ as)
+
+tcBindKind :: Bool -> BindKind -> TcM (Context, [Assumption])
+tcBindKind b (Method d)
+    = withDiagnostic d $
+        do
+            let n = name d
+            y <- lookupGamma n
+            ann@(_:>: ta) <- freshInst y
+            (ctx, x) <- tcDecl b d
+            inf@(_:>: ti) <- freshInst (head x)
+            cond <- subsumes n ta ti
+            unless cond (typeMostGeneralThanExpectedError (head x) y)
+            return (ctx, [])
+tcBindKind b (Impl d)
+    = withDiagnostic d $
+        do
+            (ctx, as) <- tcDecl b d
+            let i@(n :>: (TyForall Nothing c' t')) = head as
+            (ds,rs) <- split (c' ++ ctx)
+            s <- getSubst
+            m <- quantifyAssump (toScheme n rs t')
+	    liftIO (print m)	
+            a' <- wfAssump (toScheme n rs t')
+            a1 <- quantifyAssump a'
+            return (ds, if b then [a1] else a1 : tail as)
+tcBindKind b (Expl ty d)
+    = withDiagnostic d $
+      do
+        let ann = sig2Assump ty
+        a@(_ :>: (TyForall Nothing c t)) <- freshInst ann
+        (ctx, x) <- tcDecl b d
+        let i@(n :>: (TyForall Nothing c' t')) = head x
+        (ds,rs) <- split (c' ++ ctx)
+        s <- getSubst
+        i'@(_ :>: ti) <- wfAssump (toScheme n rs t')
+        let
+            a'@(_ :>: ta) = apply s a
+        a'' <- quantifyAssump a'
+        i'' <- quantifyAssump i'
+        condition <- subsumes n ti ta
+        unless condition (typeMostGeneralThanExpectedError i'' a'')
+        return (ds, if b then [ann] else ann : tail x)
+
+-- a function to reduce the set of infered constraints. It
+-- returns a pair of contexts:
+-- 1 - Constraints defered to next scope level
+-- 2 - Constraints retained in this level. Must be included on the
+--     type
+
+
+split :: Context -> TcM (Context, Context)
+split ctx
+    = do
+        s <- getSubst
+        ctx' <- reduce (apply s ctx)
+        vs <- ftvM
+        return (partition (all (`elem` vs) . fv) ctx')
+
+-- subsumption test for type anotations
+
+subsumes :: Id -> Type -> Type -> TcM Bool
+subsumes i inf ann
+    = do
+        let
+            (ctxi,ti) = splitType inf
+            (ctxa,ta) = splitType ann
+        s <- match ti ta
+        wfAssump (toScheme i (apply s ctxi) ta)
+        return True
+
+
+-- builds a list of implict / explicit binds form a list
+-- of declarations
+
+bindsFrom :: [Decl] -> ([BindKind], [Assumption])
+bindsFrom ds
+    = (foldr step [] bs, map sig2Assump st)
+      where
+        (ts,bs) = partition isTypeSig ds
+        ns = map (\t -> (name t, t)) ts
+        nbs = map (\b -> name b) bs
+        st = foldr go [] ts
+        go t ac
+            = if (name t) `elem` nbs then
+                ac else t : ac
+        step b ac
+            = case lookup (name b) ns of
+                  Just t  -> Expl t b : ac
+                  Nothing -> Impl b : ac
+
+-- needed instances for dependency analysis of local declarations
+
+instance Nameable BindKind where
+    name (Impl d) = name d
+    name (Expl t _) = name t
+    name (Method d) = name d
+
+instance Referenceable BindKind where
+    kindRefNames _ = []
+
+    typeRefNames (Impl d) = typeRefNames d
+    typeRefNames (Expl _ d) = typeRefNames d
+    typeRefNames (Method d) = typeRefNames d
+
+
+-- some auxiliar functions
+
+isTypeSig :: Decl -> Bool
+isTypeSig (TypeSig _ _ _) = True
+isTypeSig _ = False
+
+sig2Assump (TypeSig _ [n] t)
+    = toId n :>: f t
+      where
+        f x@(TyForall _ _ _) = x
+        f x = TyForall Nothing [] x
+
+assumpFrom :: BindKind -> Assumption
+assumpFrom (Expl ty _) = sig2Assump ty
+
+isExpl (Expl _ _) = True
+isExpl _ = False
+
+tcSeq tc [] = return ([],[])
+tcSeq tc (bs:bss)
+    = do
+        (ctx,as)    <- tc bs
+        (ctx', as') <- extendGamma as (tcSeq tc bss)
+        return (ctx ++ ctx', as ++ as')
+
+quantifyAssump(i :>: t)
+    = liftM (i :>:) (uncurry quantify (splitType t))
+
+fst3 (a,_,_) = a
+snd3 (_,b,_) = b
+trd3 (_,_,c) = c

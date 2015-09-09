@@ -1,0 +1,118 @@
+name:                mptc
+version:             0.1.0.0
+synopsis:            Initial project template from stack
+description:         Please see README.md
+homepage:            http://github.com/githubuser/mptc#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Example Author Name
+maintainer:          example@example.com
+copyright:           2010 Author Here
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     BuiltIn.BuiltInTypes
+                       BuiltIn.InitialDataConEnv
+                       BuiltIn.InitialKindEnv
+                       Iface.ClassInstCollector
+                       Iface.DataConsCollector
+                       Iface.Iface
+                       Iface.IfaceDriver
+                       Iface.IfaceReader
+                       Iface.IfaceWriter
+                       Iface.InstDeriving
+                       Tc.Assumption
+                       Tc.Class
+                       Tc.TcAlphaEq
+                       Tc.TcClassInstGen
+                       Tc.TcCriteria
+                       Tc.TcDecl
+                       Tc.TcDriver
+                       Tc.TcEnv
+                       Tc.TcExp
+                       Tc.TcInst
+                       Tc.TcLabel
+                       Tc.TcLcg
+                       Tc.TcLiteral
+                       Tc.TcMonad
+                       Tc.TcOrdering
+                       Tc.TcPat
+                       Tc.TcSat
+                       Tc.TcSimplify
+                       Tc.TcSubst
+                       Tc.TcWellformed
+                       Tc.TySyn
+                       Tc.Kc.KcDriver
+                       Tc.Kc.KcEnv
+                       Tc.Kc.KcMonad
+                       Tc.Kc.KcSubst
+                       Utils.CmdArgParser
+                       Utils.Debug
+                       Utils.DependencyAnalysis
+                       Utils.Env
+                       Utils.EnvMonad
+                       Utils.ErrMsg
+                       Utils.ExpandTySyn
+                       Utils.FileNameUtils
+                       Utils.Id
+                       Utils.Nameable
+                       Utils.RecompilationChecker
+                       Utils.Stack
+                       Language.Haskell.Exts
+                       Language.Haskell.Exts.Annotated
+                       Language.Haskell.Exts.Build
+                       Language.Haskell.Exts.Comments
+                       Language.Haskell.Exts.Extension
+                       Language.Haskell.Exts.ExtScheme
+                       Language.Haskell.Exts.Fixity
+                       Language.Haskell.Exts.InternalLexer
+                       Language.Haskell.Exts.InternalParser
+                       Language.Haskell.Exts.Lexer
+                       Language.Haskell.Exts.ParseMonad
+                       Language.Haskell.Exts.Parser
+                       Language.Haskell.Exts.ParseSyntax
+                       Language.Haskell.Exts.ParseUtils
+                       Language.Haskell.Exts.Pretty
+                       Language.Haskell.Exts.SrcLoc
+                       Language.Haskell.Exts.Syntax
+                       Language.Haskell.Exts.Annotated.Build
+                       Language.Haskell.Exts.Annotated.ExactPrint
+                       Language.Haskell.Exts.Annotated.Fixity
+                       Language.Haskell.Exts.Annotated.Simplify
+                       Language.Haskell.Exts.Annotated.Syntax
+  build-depends:       base >= 4.7 && < 5,
+                       mtl,
+                       pretty,
+                       containers,
+                       filepath,
+                       parsec,
+                       unix,
+                       syb,
+                       array,
+                       cpphs
+  default-language:    Haskell2010
+
+executable mptc-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , mptc
+  default-language:    Haskell2010
+
+test-suite mptc-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , mptc
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/githubuser/mptc

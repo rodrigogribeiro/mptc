@@ -1,0 +1,93 @@
+
+module Tc.TcSat where
+
+import Control.Monad.Trans
+
+import Control.Monad (liftM, liftM2, foldM, filterM, when, unless,zipWithM)
+import Data.List (nub, intercalate)
+import qualified Data.Map as Map
+import Data.Maybe
+
+import Language.Haskell.Exts
+
+import Tc.Class
+import Tc.TcCriteria
+import Tc.TcMonad
+import Tc.TcOrdering
+import Tc.TcSubst
+
+import Utils.Id
+import Utils.EnvMonad(defaultHandle)
+import Utils.ErrMsg
+
+
+-- this module implements the constraint set satisfiability
+-- algorithm, based on type ordering criteria for ensure
+-- termination.
+
+-- first we define some type synonyms
+
+type Var = Type -- INVARIANT this will hold only type variables
+
+type ConstraintMap = Map.Map Asst [Asst]
+
+-- top level satisfiability test function
+
+sat :: Context -> TcM [Subst]
+sat ps 
+	= do
+		phis <- mapM (\_ -> initialPhi) ps
+		sati phis ps
+
+sati :: [Phi] -> Context -> TcM [Subst]		
+sati [] [] 
+	= return [nullSubst] -- rule SEmpty1
+sati [phi] [p]             -- rule SInst1
+	= satone phi p
+sati (phi:phis) (p:ps)          -- rule SConj1
+	= do
+--		liftIO (putStrLn (concat ["Testing:", prettyPrint p]))
+		s0 <- satone phi p
+		--liftIO (putStrLn (concat ["result:", show s0]))
+		ss1 <- mapM (sati phis) [apply s ps | s <- s0]
+		return ([s' @@ s | s <- s0, s1 <- ss1, s' <- s1])
+
+satone :: Phi -> Asst -> TcM [Subst]
+satone phi p 
+	= do
+--		liftIO (putStrLn (concat ["Testing:", prettyPrint p]))
+		delta <- sats p
+--		liftIO (putStrLn (concat ["delta:", show delta]))
+		foldM (satstep phi p) [[]] delta		
+
+
+satstep :: Phi -> Asst -> [Subst] -> (Subst,Context,Asst) -> TcM [Subst]
+satstep phi p s (s',ps',pi0)
+	= do
+--		liftIO (putStrLn $ "Instance Head:" ++ prettyPrint pi0)
+--		liftIO (putStrLn $ "Constraint:" ++ prettyPrint p)
+		phi' <- updatePhi pi0 p phi
+--		liftIO (putStrLn $ "Pi:" ++ (intercalate "," $ map prettyPrint $ snd $ fromJust $ Map.lookup pi0 phi'))
+--		liftIO (mapM_ (putStrLn . prettyPrint) ps')
+		let n = length ps'
+		ss <- liftM (map (s' @@)) (sati (replicate n phi') ps')
+		return [s' @@ s1 | s' <- ss, s1 <- s]
+
+
+-- sats function
+
+sats :: Asst -> TcM [(Subst, Context, Asst)]
+sats pi 
+	= do
+		is <- instsFrom pi
+		liftM catMaybes (mapM (gen pi) is)
+
+gen :: Asst -> Inst -> TcM (Maybe (Subst, Context, Asst))
+gen pi i 
+	= do
+		let pi' = toAsst i
+		pi1 <- liftM toAsst (quantifyInst i)
+		s <- defaultHandle (unify1 False pi pi')
+		return (maybe Nothing (\s' -> Just (s', apply s' (instsupers i), pi1)) s)
+
+

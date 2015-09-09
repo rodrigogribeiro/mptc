@@ -1,0 +1,16 @@
+module ZipTest where
+
+--import Base
+
+import PreludeIO
+
+class Zip a b c where
+  z :: a -> b -> c
+instance Zip [a] [b] [(a,b)] where
+  z = []
+instance Zip [(a,b)] c_d e => Zip [a] [b] (c_d->e) where
+  z as bs c_d = z (z as bs) c_d
+   
+test = do print ( z [1] [2] )
+          print ( z [1] [2] [3])
+          print ( z [1] [2] [3] [4] )
