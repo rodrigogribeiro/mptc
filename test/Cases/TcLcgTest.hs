@@ -1,12 +1,12 @@
 
-module Tests.Cases.TcLcgTest where
+module Cases.TcLcgTest where
 
 import Test.HUnit
 
 import Tc.TcLcg
 import Tc.TcEnv
 
-import Tests.Data.TestCase1Lcg
+import Data.TestCase1Lcg
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

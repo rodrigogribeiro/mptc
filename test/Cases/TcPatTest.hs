@@ -1,12 +1,12 @@
 
-module Tests.Cases.TcPatTest where
+module Cases.TcPatTest where
 
 import Test.HUnit
 
 import Tc.TcPat
 import Tc.TcEnv
 
-import Tests.Data.TestCase1TcPat
+import Data.TestCase1TcPat
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

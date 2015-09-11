@@ -11,7 +11,7 @@ import Utils.ErrMsg
 
 -- a synonym for kind variables and substituions
 
-type KVar = QName
+type KVar = Name
 
 type KindSubst = [(KVar, Kind)]
 

@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1KindInference where
+module Data.TestCase1KindInference where
 
 class F a where
   f :: a b -> b

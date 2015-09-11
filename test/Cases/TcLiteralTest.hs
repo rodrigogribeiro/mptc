@@ -1,5 +1,5 @@
 
-module Tests.Cases.TcLiteralTest where
+module Cases.TcLiteralTest where
 
 
 import Test.HUnit
@@ -7,7 +7,7 @@ import Test.HUnit
 import Tc.TcLiteral
 import Tc.TcEnv
 
-import Tests.Data.TestCase1TcLiteral
+import Data.TestCase1TcLiteral
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

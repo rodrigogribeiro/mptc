@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase2KindDependence where
+module Data.TestCase2KindDependence where
 
 
 data GRose f a = Node a (f (GRose f a))

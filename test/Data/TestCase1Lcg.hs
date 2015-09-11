@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1Lcg where
+module Data.TestCase1Lcg where
 
 import Language.Haskell.Exts
 

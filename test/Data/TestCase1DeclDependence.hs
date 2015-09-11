@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1DeclDependence where
+module Data.TestCase1DeclDependence where
 
 a = 1
 

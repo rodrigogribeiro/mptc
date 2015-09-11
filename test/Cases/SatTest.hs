@@ -1,12 +1,12 @@
 
-module Tests.Cases.SatTest where
+module Cases.SatTest where
 
 import Test.HUnit
 
 import Tc.TcSat
 import Tc.TcEnv
 
-import Tests.Data.TestCase1Sat
+import Data.TestCase1Sat
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

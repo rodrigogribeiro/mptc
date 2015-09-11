@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1TcExp where
+module Data.TestCase1TcExp where
 
 
 import Language.Haskell.Exts hiding (loc)

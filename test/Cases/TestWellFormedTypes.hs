@@ -1,5 +1,5 @@
 
-module Tests.Cases.TestWellFormedTypes where
+module Cases.TestWellFormedTypes where
 
 import Data.Maybe
 import Test.HUnit
@@ -7,7 +7,7 @@ import Language.Haskell.Exts
 
 import Tc.TcEnv
 import Tc.TcWellformed
-import Tests.Data.TestCase1WellFormedTypes
+import Data.TestCase1WellFormedTypes
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

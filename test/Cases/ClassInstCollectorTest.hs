@@ -1,5 +1,5 @@
 
-module Tests.Cases.ClassInstCollectorTest where
+module Cases.ClassInstCollectorTest where
 
 import Language.Haskell.Exts
 

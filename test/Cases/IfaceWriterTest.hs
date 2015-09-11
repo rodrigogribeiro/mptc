@@ -1,5 +1,5 @@
 
-module Tests.Cases.IfaceWriterTest where
+module Cases.IfaceWriterTest where
 
 import Data.List
 import qualified Data.Map as Map

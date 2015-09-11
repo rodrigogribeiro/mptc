@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1TypeSynExpand where
+module Data.TestCase1TypeSynExpand where
 
 
 type String1 = [Char]

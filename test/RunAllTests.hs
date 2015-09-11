@@ -1,25 +1,24 @@
 
-module Tests.RunAllTests where
 
 import Test.Framework (defaultMain, testGroup)
 import Test.Framework.Providers.HUnit
 
-import Tests.Cases.DeclDependencyTest
-import Tests.Cases.KindDependencyTest
-import Tests.Cases.KindInferenceTest
-import Tests.Cases.SatTest
-import Tests.Cases.TcExpTest
-import Tests.Cases.TcLiteralTest
-import Tests.Cases.TcPatTest
-import Tests.Cases.TestWellFormedTypes
-import Tests.Cases.TypeSynExpandTest
-import Tests.Cases.TcLcgTest
-import Tests.Cases.TypeOrderingTest
-import Tests.Cases.InstDerivingTest
-import Tests.Cases.DataConsInfoTest
-import Tests.Cases.ClassInstCollectorTest
-import Tests.Cases.IfaceWriterTest
-import Tests.Cases.IfaceReaderTest
+import Cases.DeclDependencyTest
+import Cases.KindDependencyTest
+import Cases.KindInferenceTest
+import Cases.SatTest
+import Cases.TcExpTest
+import Cases.TcLiteralTest
+import Cases.TcPatTest
+import Cases.TestWellFormedTypes
+import Cases.TypeSynExpandTest
+import Cases.TcLcgTest
+import Cases.TypeOrderingTest
+import Cases.InstDerivingTest
+import Cases.DataConsInfoTest
+import Cases.ClassInstCollectorTest
+import Cases.IfaceWriterTest
+import Cases.IfaceReaderTest
 
 main = defaultMain tests
 

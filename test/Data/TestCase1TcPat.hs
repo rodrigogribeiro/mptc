@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1TcPat where
+module Data.TestCase1TcPat where
 
 
 import Language.Haskell.Exts

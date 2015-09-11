@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1TcLiteral where
+module Data.TestCase1TcLiteral where
 
 import Language.Haskell.Exts
 

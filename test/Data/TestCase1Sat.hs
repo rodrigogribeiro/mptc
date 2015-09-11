@@ -1,4 +1,4 @@
-module Tests.Data.TestCase1Sat where
+module Data.TestCase1Sat where
 
 import Language.Haskell.Exts
 import BuiltIn.BuiltInTypes

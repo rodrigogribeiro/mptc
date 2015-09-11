@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1KindDependence where
+module Data.TestCase1KindDependence where
 
 
 class C a where

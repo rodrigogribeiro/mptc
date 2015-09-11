@@ -1,5 +1,5 @@
 
-module Tests.Cases.TcExpTest where
+module Cases.TcExpTest where
 
 import Language.Haskell.Exts
 import Test.HUnit
@@ -8,7 +8,7 @@ import Tc.TcAlphaEq
 import Tc.TcExp
 import Tc.TcEnv
 
-import Tests.Data.TestCase1TcExp
+import Data.TestCase1TcExp
 import Utils.EnvMonad
 import qualified Utils.Env as Env
 import Utils.Stack

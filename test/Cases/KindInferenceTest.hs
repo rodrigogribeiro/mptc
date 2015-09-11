@@ -1,5 +1,5 @@
 
-module Tests.Cases.KindInferenceTest where
+module Cases.KindInferenceTest where
 
 import Language.Haskell.Exts
 import Data.Map (toList)

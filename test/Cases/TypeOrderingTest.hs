@@ -1,5 +1,5 @@
 
-module Tests.Cases.TypeOrderingTest where
+module Cases.TypeOrderingTest where
 
 import Control.Monad.Trans (liftIO)
 
@@ -7,7 +7,7 @@ import Test.HUnit
 
 import Tc.TcOrdering
 
-import Tests.Data.TestCase1TypeOrdering
+import Data.TestCase1TypeOrdering
 import Utils.EnvMonad
 
 

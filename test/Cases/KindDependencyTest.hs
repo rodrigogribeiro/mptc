@@ -1,4 +1,4 @@
-module Tests.Cases.KindDependencyTest where
+module Cases.KindDependencyTest where
 
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit

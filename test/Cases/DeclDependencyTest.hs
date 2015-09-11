@@ -1,5 +1,5 @@
 
-module Tests.Cases.DeclDependencyTest where
+module Cases.DeclDependencyTest where
 
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit

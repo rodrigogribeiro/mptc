@@ -1,5 +1,5 @@
 
-module Tests.Cases.IfaceReaderTest where
+module Cases.IfaceReaderTest where
 
 import Data.List
 import qualified Data.Map as Map

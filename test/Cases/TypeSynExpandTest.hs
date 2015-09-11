@@ -1,5 +1,5 @@
 
-module Tests.Cases.TypeSynExpandTest where
+module Cases.TypeSynExpandTest where
 
 import Language.Haskell.Exts
 

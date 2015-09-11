@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1WellFormedTypes where
+module Data.TestCase1WellFormedTypes where
 
 import Language.Haskell.Exts
 

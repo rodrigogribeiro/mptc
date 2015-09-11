@@ -129,4 +129,4 @@ incFresh :: KcState -> KcState
 incFresh s = s{fresh = (fresh s) + 1}
 
 newVar :: KcState -> Kind
-newVar s = KindVar (UnQual $ Ident ("$" ++ show (fresh s)))
+newVar s = KindVar (Ident ("$" ++ show (fresh s)))

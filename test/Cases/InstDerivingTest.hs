@@ -1,5 +1,5 @@
 
-module Tests.Cases.InstDerivingTest where
+module Cases.InstDerivingTest where
 
 import Data.List (sort)
 import Language.Haskell.Exts hiding (name)

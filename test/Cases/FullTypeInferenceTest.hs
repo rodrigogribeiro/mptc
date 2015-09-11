@@ -1,5 +1,5 @@
 
-module Tests.Cases.FullTypeInferenceTest where
+module Cases.FullTypeInferenceTest where
 
 
 import Language.Haskell.Exts

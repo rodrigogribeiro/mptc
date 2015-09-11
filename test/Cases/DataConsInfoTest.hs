@@ -1,5 +1,5 @@
 
-module Tests.Cases.DataConsInfoTest where
+module Cases.DataConsInfoTest where
 
 import Data.List (sort)
 import Language.Haskell.Exts hiding (name)

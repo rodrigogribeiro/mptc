@@ -1,5 +1,5 @@
 
-module Tests.Data.TestCase1TypeOrdering where
+module Data.TestCase1TypeOrdering where
 
 import Language.Haskell.Exts
 
