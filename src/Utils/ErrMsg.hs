@@ -4,7 +4,7 @@ module Utils.ErrMsg (module Utils.ErrMsg,
                      module Text.PrettyPrint.HughesPJ) where
 
 import Control.Monad(replicateM)
-import Control.Monad.Except(throwError)
+import Control.Monad.Error(throwError)
 import Control.Monad.State
 import Data.List(intersperse)
 import Language.Haskell.Exts

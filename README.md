@@ -18,4 +18,9 @@ without functional dependencies or type families.
 /src/Tests: Unit tests for the implementation. To run all tests, just execute the main function in module
             RunAllTests
 /src/Utils: Some utilities.
-   
+
+3  - Building code
+
+First, you will need Haskell stack:
+
+
