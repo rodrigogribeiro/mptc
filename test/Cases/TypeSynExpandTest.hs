@@ -1,6 +1,8 @@
 
 module Cases.TypeSynExpandTest where
 
+import Cases.BaseDir
+    
 import Language.Haskell.Exts
 
 import Utils.ExpandTySyn
@@ -16,7 +18,7 @@ testtysynexpand (f,s)
         --putStrLn (prettyPrint $ snd r'')
         return ()
 
-test1 = ("/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/TestCase1TypeSynExpand.hs", "")
+test1 = (baseDir ++ "/mptc/test/Data/TestCase1TypeSynExpand.hs", "")
 
 -- case analysis over the parser result
 

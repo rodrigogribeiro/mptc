@@ -1,6 +1,8 @@
 
 module Cases.DataConsInfoTest where
 
+import Cases.BaseDir
+    
 import Data.List (sort)
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit 
@@ -75,5 +77,5 @@ trd3 (_,_,c) = c
 
 -- test file
 
-file = "/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/Full/Teste1.hs"
+file = baseDir ++ "/mptc/test/Data/Full/Teste1.hs"
 

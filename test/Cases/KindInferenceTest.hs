@@ -1,6 +1,8 @@
 
 module Cases.KindInferenceTest where
 
+import Cases.BaseDir
+    
 import Language.Haskell.Exts
 import Data.Map (toList)
 import Test.HUnit
@@ -19,7 +21,7 @@ testkindinference (f,s)
         return ()
         --mapM_ (\(i,k) -> putStrLn $ (show i) ++ " - " ++ (prettyPrint k)) (toList e)
 
-test1 = ("/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/TestCase1KindInference.hs", "")
+test1 = (baseDir ++ "/mptc/test/Data/TestCase1KindInference.hs", "")
 
 -- case analysis over the parser result
 

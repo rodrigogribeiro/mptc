@@ -4,6 +4,8 @@ module Cases.DeclDependencyTest where
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit
 
+import Cases.BaseDir
+    
 import Utils.DependencyAnalysis
 import Utils.Nameable
 
@@ -19,7 +21,7 @@ testdecldependency (f,s)
            ns = show $ map (map name) (dependencyAnalysis TypeAnalysis r')
         assertEqual "Type Dependency Result:" s ns
 
-test1 = ("/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/TestCase1DeclDependence.hs", "[[a],[b],[h,g,f],[c,d]]")
+test1 = (baseDir ++ "/mptc/test/Data/TestCase1DeclDependence.hs", "[[a],[b],[h,g,f],[c,d]]")        
 
 decls (Module _ _ _ _ _ _ ds) = ds
     -- pattern matching function over parser results

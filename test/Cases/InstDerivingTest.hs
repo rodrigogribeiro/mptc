@@ -1,6 +1,8 @@
 
 module Cases.InstDerivingTest where
 
+import Cases.BaseDir
+    
 import Data.List (sort)
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit 
@@ -15,7 +17,7 @@ import Utils.Stack
 import Utils.Id
 import Utils.EnvMonad
 
-testinstderiving1 = testinstancederiving "/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/Full/Teste1.hs"
+testinstderiving1 = testinstancederiving $ baseDir ++ "/mptc/test/Data/Full/Teste1.hs"
 
 
 testinstancederiving f 

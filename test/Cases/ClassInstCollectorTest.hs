@@ -1,6 +1,8 @@
 
 module Cases.ClassInstCollectorTest where
 
+import Cases.BaseDir
+    
 import Language.Haskell.Exts
 
 import Iface.ClassInstCollector
@@ -60,4 +62,4 @@ tfloat = TyCon (UnQual (Ident "Float"))
 
 -- test file
 
-file = "/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/Full/Teste1.hs"
+file = baseDir ++ "/mptc/test/Data/Full/Teste1.hs"

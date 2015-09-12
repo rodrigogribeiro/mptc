@@ -1,5 +1,7 @@
 module Cases.KindDependencyTest where
 
+import Cases.BaseDir
+    
 import Language.Haskell.Exts hiding (name)
 import Test.HUnit
 
@@ -18,8 +20,8 @@ testkinddependency (f,s)
            ns = show $ map (map name) (dependencyAnalysis KindAnalysis r')
         assertEqual "Kind Dependency Result:" s ns
 
-test1 = ("/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/TestCase1KindDependence.hs", "[[T,C]]")
-test2 = ("/home/rodrigo/Dropbox/projects/haskell/mptc/src/Tests/Data/TestCase2KindDependence.hs", "[[GRose],[LNode]]")
+test1 = (baseDir ++ "/mptc/test/Data/TestCase1KindDependence.hs", "[[T,C]]")
+test2 = (baseDir ++ "/mptc/test/Data/TestCase2KindDependence.hs", "[[GRose],[LNode]]")
 
 decls (Module _ _ _ _ _ _ ds) = ds
     -- pattern matching function over parser results
