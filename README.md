@@ -22,21 +22,16 @@ Code structure
 
 Building the code
 ---------------
-
-    - First, you will need Haskell stack tool, which can be downloaded
-    [here](https://github.com/commercialhaskell/stack/wiki/Downloads).
-	- Next, run
+First, you will need Haskell stack tool, which can be downloaded [here](https://github.com/commercialhaskell/stack/wiki/Downloads).
+Next, run
 
 	 stack setup
 	
-    to install the correct GHC version.
-
-    - Now, run
+ to install the correct GHC version. Now, run
 
      stack build
 
-     to install all Haskell libraries dependencies and compiling the
-     whole project.
+to install all Haskell libraries dependencies and compiling the whole project.
 
 Executing the code
 -----------------
