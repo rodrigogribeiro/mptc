@@ -43,12 +43,12 @@ do:
 
 where avaliable OPTIONS are:
 
---k: Show infered kinds
---c: Show infered class constraints
---i: Show infered instance constraints
---a: Show infered types (include data constructors)
---r: Turn off recompilation checker
---make : Enable multi-module processing
---h: Show this message
+    --k: Show infered kinds
+    --c: Show infered class constraints
+    --i: Show infered instance constraints
+    --a: Show infered types (include data constructors)
+    --r: Turn off recompilation checker
+    --make : Enable multi-module processing
+    --h: Show this message
 
     
