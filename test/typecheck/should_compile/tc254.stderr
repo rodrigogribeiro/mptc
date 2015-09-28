@@ -1,4 +1,0 @@
-
-tc254.hs:8:1:
-    Warning: No explicit AT declaration for `Typ'
-    In the instance declaration for `Cls Int'

@@ -1,4 +1,0 @@
-
-tc243.hs:10:1:
-    Warning: Top-level binding with no type signature:
-               (.+.) :: forall a. a
